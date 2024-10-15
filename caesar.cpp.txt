@@ -1,0 +1,77 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Cipher
+{
+    public:
+    virtual string encode(const string& plaintext) = 0;
+    virtual string decode(const string& ciphertext) = 0;
+    
+    virtual ~Cipher() = default;
+};
+
+class CaesarCipher : public Cipher
+{
+    private:
+    int offset;
+    
+    public:
+    CaesarCipher(int offset)
+    {
+        this->offset = offset;
+    }
+    
+    string encode(const string& input) override {
+        string output = "";
+    
+        for (char c : input) {
+            if (isalpha(c)) {
+                char base = islower(c) ? 'a' : 'A';
+                output += char(int(base + (c - base + offset) % 26));
+            } else {
+                output += c;
+            }
+        }
+        
+        return output;
+    }
+    
+    string decode(const string& input) override {
+        string output = "";
+    
+        for (char c : input) {
+            if (isalpha(c)) {
+                char base = islower(c) ? 'a' : 'A';
+                output += char(int(base + (c - base - offset + 26) % 26));
+            } else {
+                output += c;
+            }
+        }
+        
+        return output;
+    }
+    
+    ~CaesarCipher() override {}
+};
+
+int main() {
+    string inputText;
+    int shiftValue;
+    
+    cout << "Enter text: ";
+    getline(cin, inputText);
+    
+    cout << "Enter shift value: ";
+    cin >> shiftValue;
+    
+    CaesarCipher cipher(shiftValue);
+
+    string encodedText = cipher.encode(inputText);
+    cout << "Encoded text: " << encodedText << endl;
+
+    string decodedText = cipher.decode(encodedText);
+    cout << "Decoded text: " << decodedText << endl;
+    
+    return 0;
+}
